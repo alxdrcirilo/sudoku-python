@@ -13,7 +13,7 @@ A simple [Sudoku](https://en.wikipedia.org/wiki/Sudoku) game written in Python u
 
 ## Installation
 
-### Setup Instructions
+### Setup instructions
 
 1. Clone the repository:  
 `git clone https://github.com/alxdrcirilo/sudoku-python.git`
@@ -25,6 +25,14 @@ A simple [Sudoku](https://en.wikipedia.org/wiki/Sudoku) game written in Python u
 `pip install -r requirements.txt`
 5. Run the game:  
 `python main.py`
+
+### Compile instructions
+
+Using [`pyinstaller`](https://pyinstaller.org), the command should look similar to the following:
+
+```shell
+pyinstaller --name sudoku --onefile --noconsole --add-data "assets:assets" main.py
+```
 
 ## Settings
 

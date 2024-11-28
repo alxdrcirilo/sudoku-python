@@ -5,6 +5,7 @@ import pygame
 import pygame.freetype
 
 from sudoku.logic.board import Board, Coordinates
+from sudoku.logic.utils import resource_path
 
 pygame.init()
 pygame.display.set_caption("Sudoku")
@@ -29,6 +30,7 @@ class Game:
 
         # Game state
         self.board = Board()
+        self.helper: bool = False
         self.lives = 5
         self.rects: dict[Coordinates, pygame.Rect] = {}
 
@@ -71,42 +73,45 @@ class Game:
 
             if hover:
                 row, col = [i // (self._resolution[0] // 9) for i in hover.topleft]
-                # Row
-                pygame.draw.rect(
-                    self._screen,
-                    Color.GREEN.value,
-                    pygame.Rect(
-                        self._padding,
-                        (col - 1) * y // 9 + padding,
-                        x,
-                        y // 9,
-                    ),
-                    2,
-                )
-                # Column
-                pygame.draw.rect(
-                    self._screen,
-                    Color.GREEN.value,
-                    pygame.Rect(
-                        row * x // 9 + self._padding,
-                        padding,
-                        x // 9,
-                        y,
-                    ),
-                    2,
-                )
-                # Subgrid
-                pygame.draw.rect(
-                    self._screen,
-                    Color.GREEN.value,
-                    pygame.Rect(
-                        row // 3 * y // 3 + self._padding,
-                        (col - 1) // 3 * x // 3 + padding,
-                        x // 3,
-                        y // 3,
-                    ),
-                    3,
-                )
+
+                if self.helper:
+                    # Row
+                    pygame.draw.rect(
+                        self._screen,
+                        Color.GREEN.value,
+                        pygame.Rect(
+                            self._padding,
+                            (col - 1) * y // 9 + padding,
+                            x,
+                            y // 9,
+                        ),
+                        3,
+                    )
+                    # Column
+                    pygame.draw.rect(
+                        self._screen,
+                        Color.GREEN.value,
+                        pygame.Rect(
+                            row * x // 9 + self._padding,
+                            padding,
+                            x // 9,
+                            y,
+                        ),
+                        3,
+                    )
+                    # Subgrid
+                    pygame.draw.rect(
+                        self._screen,
+                        Color.GREEN.value,
+                        pygame.Rect(
+                            row // 3 * y // 3 + self._padding,
+                            (col - 1) // 3 * x // 3 + padding,
+                            x // 3,
+                            y // 3,
+                        ),
+                        4,
+                    )
+
                 # Cell content
                 pygame.draw.rect(self._screen, Color.GREEN.value, hover)
                 # Cell border
@@ -148,8 +153,10 @@ class Game:
             """
             Draw the stats on the screen.
             """
-            font = pygame.font.Font("assets/fonts/OpenSans-Medium.ttf", 18)
-            heart = pygame.image.load("assets/images/heart.png")
+            font = pygame.font.Font(
+                resource_path("../../assets/fonts/OpenSans-Medium.ttf"), 18
+            )
+            heart = pygame.image.load(resource_path("../../assets/images/heart.png"))
             text = font.render("Lives: ", True, Color.BLACK.value)
             self._screen.blit(
                 text,
@@ -173,7 +180,9 @@ class Game:
             """
             Draw the digits on the screen.
             """
-            font = pygame.font.Font("assets/fonts/OpenSans-Medium.ttf", 22)
+            font = pygame.font.Font(
+                resource_path("../../assets/fonts/OpenSans-Medium.ttf"), 22
+            )
             x, y = self._resolution
             for i in range(9):
                 for j in range(9):
@@ -198,7 +207,9 @@ class Game:
             """
             Draw the time on the screen.
             """
-            font = pygame.font.Font("assets/fonts/OpenSans-Medium.ttf", 16)
+            font = pygame.font.Font(
+                resource_path("../../assets/fonts/OpenSans-Medium.ttf"), 16
+            )
             text = font.render(
                 f"{int(time.time() - self._time) // 60:02d}:{int(time.time() - self._time) % 60:02.0f}",
                 True,
@@ -292,7 +303,9 @@ class Game:
                                         digit = int(event.unicode)
                                         if digit == self.board.grid[x, y]:
                                             pygame.mixer.music.load(
-                                                "assets/sounds/Misc 1.wav"
+                                                resource_path(
+                                                    "assets/sounds/Misc 1.wav"
+                                                )
                                             )
                                             pygame.mixer.music.play()
                                             self.board.visible[x, y] = digit
@@ -302,7 +315,9 @@ class Game:
                                         else:
                                             self.lives -= 1
                                             pygame.mixer.music.load(
-                                                "assets/sounds/Coin 1.wav"
+                                                resource_path(
+                                                    "assets/sounds/Coin 1.wav"
+                                                )
                                             )
                                             pygame.mixer.music.play()
                                             if self.lives <= 0:
@@ -327,7 +342,7 @@ class Game:
         :param str message: message to display
         """
         self._screen.fill(Color.WHITE.value)
-        font = pygame.font.Font("assets/fonts/OpenSans-Medium.ttf", 32)
+        font = pygame.font.Font(resource_path("assets/fonts/OpenSans-Medium.ttf"), 32)
         text = font.render(message, True, Color.BLACK.value)
         text_rect = text.get_rect(
             center=(
